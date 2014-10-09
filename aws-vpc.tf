@@ -1,11 +1,11 @@
 provider "aws" {
 	access_key = "${var.aws_access_key}"
 	secret_key = "${var.aws_secret_key}"
-	region = "us-east-1"
+	region = "${var.region}"
 }
 
 resource "aws_vpc" "default" {
-	cidr_block = "10.0.0.0/16"
+	cidr_block = "${var.network}.0.0/16"
 }
 
 resource "aws_internet_gateway" "default" {
@@ -22,13 +22,13 @@ resource "aws_security_group" "nat" {
 		from_port = 0
 		to_port = 65535
 		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.us-east-1b-private.cidr_block}"]
+		cidr_blocks = ["${aws_subnet.docker-services.cidr_block}"]
 	}
 	ingress {
 		from_port = 0
 		to_port = 65535
 		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.us-east-1d-private.cidr_block}"]
+		cidr_blocks = ["${aws_subnet.cfruntime.cidr_block}"]
 	}
 
 	vpc_id = "${aws_vpc.default.id}"
@@ -36,11 +36,10 @@ resource "aws_security_group" "nat" {
 
 resource "aws_instance" "nat" {
 	ami = "${var.aws_nat_ami}"
-	availability_zone = "us-east-1b"
 	instance_type = "m1.small"
 	key_name = "${var.aws_key_name}"
 	security_groups = ["${aws_security_group.nat.id}"]
-	subnet_id = "${aws_subnet.us-east-1b-public.id}"
+	subnet_id = "${aws_subnet.bastion.id}"
 	associate_public_ip_address = true
 	source_dest_check = false
 }
@@ -52,23 +51,25 @@ resource "aws_eip" "nat" {
 
 # Public subnets
 
-resource "aws_subnet" "us-east-1b-public" {
+resource "aws_subnet" "bastion" {
 	vpc_id = "${aws_vpc.default.id}"
-
-	cidr_block = "10.0.0.0/24"
-	availability_zone = "us-east-1b"
+	cidr_block = "${var.network}.0.0/24"
 }
 
-resource "aws_subnet" "us-east-1d-public" {
+resource "aws_subnet" "microbosh" {
 	vpc_id = "${aws_vpc.default.id}"
-
-	cidr_block = "10.0.2.0/24"
-	availability_zone = "us-east-1d"
+	cidr_block = "${var.network}.2.0/24"
 }
+
+resource "aws_subnet" "lb" {
+	vpc_id = "${aws_vpc.default.id}"
+	cidr_block = "${var.network}.3.0/24"
+}
+
 
 # Routing table for public subnets
 
-resource "aws_route_table" "us-east-1-public" {
+resource "aws_route_table" "public" {
 	vpc_id = "${aws_vpc.default.id}"
 
 	route {
@@ -77,35 +78,37 @@ resource "aws_route_table" "us-east-1-public" {
 	}
 }
 
-resource "aws_route_table_association" "us-east-1b-public" {
-	subnet_id = "${aws_subnet.us-east-1b-public.id}"
-	route_table_id = "${aws_route_table.us-east-1-public.id}"
+resource "aws_route_table_association" "microbosh-public" {
+	subnet_id = "${aws_subnet.microbosh.id}"
+	route_table_id = "${aws_route_table.public.id}"
 }
 
-resource "aws_route_table_association" "us-east-1d-public" {
-	subnet_id = "${aws_subnet.us-east-1d-public.id}"
-	route_table_id = "${aws_route_table.us-east-1-public.id}"
+resource "aws_route_table_association" "lb-public" {
+	subnet_id = "${aws_subnet.lb.id}"
+	route_table_id = "${aws_route_table.public.id}"
 }
+
+resource "aws_route_table_association" "bastion-public" {
+	subnet_id = "${aws_subnet.bastion.id}"
+	route_table_id = "${aws_route_table.public.id}"
+}
+
 
 # Private subsets
 
-resource "aws_subnet" "us-east-1b-private" {
+resource "aws_subnet" "cfruntime" {
 	vpc_id = "${aws_vpc.default.id}"
-
-	cidr_block = "10.0.1.0/24"
-	availability_zone = "us-east-1b"
+	cidr_block = "${var.network}.1.0/24"
 }
 
-resource "aws_subnet" "us-east-1d-private" {
+resource "aws_subnet" "docker-services" {
 	vpc_id = "${aws_vpc.default.id}"
-
-	cidr_block = "10.0.3.0/24"
-	availability_zone = "us-east-1d"
+	cidr_block = "${var.network}.4.0/24"
 }
 
 # Routing table for private subnets
 
-resource "aws_route_table" "us-east-1-private" {
+resource "aws_route_table" "private" {
 	vpc_id = "${aws_vpc.default.id}"
 
 	route {
@@ -114,42 +117,12 @@ resource "aws_route_table" "us-east-1-private" {
 	}
 }
 
-resource "aws_route_table_association" "us-east-1b-private" {
-	subnet_id = "${aws_subnet.us-east-1b-private.id}"
-	route_table_id = "${aws_route_table.us-east-1-private.id}"
+resource "aws_route_table_association" "docker-services-private" {
+	subnet_id = "${aws_subnet.docker-services.id}"
+	route_table_id = "${aws_route_table.private.id}"
 }
 
-resource "aws_route_table_association" "us-east-1d-private" {
-	subnet_id = "${aws_subnet.us-east-1d-private.id}"
-	route_table_id = "${aws_route_table.us-east-1-private.id}"
-}
-
-# Bastion
-
-resource "aws_security_group" "bastion" {
-	name = "bastion"
-	description = "Allow SSH traffic from the internet"
-
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-	vpc_id = "${aws_vpc.default.id}"
-}
-
-resource "aws_instance" "bastion" {
-	ami = "${var.aws_ubuntu_ami}"
-	availability_zone = "us-east-1b"
-	instance_type = "t2.micro"
-	key_name = "${var.aws_key_name}"
-	security_groups = ["${aws_security_group.bastion.id}"]
-	subnet_id = "${aws_subnet.us-east-1b-public.id}"
-}
-
-resource "aws_eip" "bastion" {
-	instance = "${aws_instance.bastion.id}"
-	vpc = true
+resource "aws_route_table_association" "cfruntime-private" {
+	subnet_id = "${aws_subnet.cfruntime.id}"
+	route_table_id = "${aws_route_table.private.id}"
 }
