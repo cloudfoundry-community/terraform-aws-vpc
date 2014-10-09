@@ -1,6 +1,6 @@
-# terraform-aws-vpc
+# terraform-cf-aws-vpc
 
-This goal of this project is to easily spin up an [Amazon Web Services](http://aws.amazon.com/) (AWS) [Virtual Private Cloud](http://aws.amazon.com/vpc/) (VPC) using [Terraform](http://terraform.io).
+This goal of this project is to easily spin up an [Amazon Web Services](http://aws.amazon.com/) (AWS) [Virtual Private Cloud](http://aws.amazon.com/vpc/) (VPC) using [Terraform](http://terraform.io). This setup VPC network for setting up Cloud Foundry.
 
 ## Configuration
 
@@ -90,3 +90,24 @@ Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
 ```
 
 **Note**: The `destroy` step usually has to be run more than once because of an issue with deleting the Elastic IP (EIP) before it is unbound from the NAT instance. Run `make destroy` again after the failure to complete the destroy phase.
+
+## Next Steps
+
+### Inception Server
+This setup the network for VPC for Cloud Foundry. Next an 'inception' server is needed as a jump box to get into VPC
+
+Refer to https://github.com/cloudfoundry-community/inception-server for following steps
+
+### Microbosh
+
+Once you have inception server you can setup microbosh using the inception server
+
+Refer to https://github.com/cloudfoundry-community/bosh-bootstrap for following steps
+
+### Cloud Foundry
+
+Now it's time to setup Cloud Foundry!
+
+Refer to https://github.com/starkandwayne/cf-boshworkspace for steps on setting up Cloud Foundry
+
+And you should have Cloud Foundry running on VPC!
