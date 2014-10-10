@@ -126,3 +126,37 @@ resource "aws_route_table_association" "cfruntime-private" {
 	subnet_id = "${aws_subnet.cfruntime.id}"
 	route_table_id = "${aws_route_table.private.id}"
 }
+
+
+resource "aws_security_group" "bastion" {
+	name = "bastion"
+	description = "Allow SSH traffic from the internet"
+
+	ingress {
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	vpc_id = "${aws_vpc.default.id}"
+}
+
+resource "aws_instance" "bastion" {
+	ami = "${var.aws_ubuntu_ami}"
+	instance_type = "m1.medium"
+	key_name = "${var.aws_key_name}"
+	associate_public_ip_address = "true"
+	security_groups = ["${aws_security_group.bastion.id}"]
+	subnet_id = "${aws_subnet.bastion.id}"
+
+	connection {
+  	user = "ubuntu"
+  	key_file = "${var.aws_key_path}"
+  }
+
+	provisioner "remote-exec" {
+		script = "scripts/provision.sh"
+  }
+
+}

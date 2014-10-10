@@ -9,7 +9,7 @@ variable "aws_nat_ami" {
 	default = "ami-49691279"
 }
 variable "aws_ubuntu_ami" {
-	default = "ami-b227efda"
+	default = "ami-37501207"
 }
 variable "network" {
 	default = "10.10"
