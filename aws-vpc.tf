@@ -19,16 +19,24 @@ resource "aws_security_group" "nat" {
 	description = "Allow services from the private subnet through NAT"
 
 	ingress {
-		from_port = 0
-		to_port = 65535
+		from_port = 22
+		to_port = 22
 		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.docker-services.cidr_block}"]
+		cidr_blocks = ["0.0.0.0/0"]
 	}
+
 	ingress {
-		from_port = 0
-		to_port = 65535
+		from_port = 80
+		to_port = 80
 		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.cfruntime.cidr_block}"]
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 443
+		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
 	}
 
 	vpc_id = "${aws_vpc.default.id}"
@@ -36,7 +44,7 @@ resource "aws_security_group" "nat" {
 
 resource "aws_instance" "nat" {
 	ami = "${var.aws_nat_ami}"
-	instance_type = "m1.small"
+	instance_type = "t2.small"
 	key_name = "${var.aws_key_name}"
 	security_groups = ["${aws_security_group.nat.id}"]
 	subnet_id = "${aws_subnet.bastion.id}"
@@ -56,11 +64,6 @@ resource "aws_subnet" "bastion" {
 	cidr_block = "${var.network}.0.0/24"
 }
 
-resource "aws_subnet" "microbosh" {
-	vpc_id = "${aws_vpc.default.id}"
-	cidr_block = "${var.network}.2.0/24"
-}
-
 resource "aws_subnet" "lb" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.3.0/24"
@@ -76,11 +79,6 @@ resource "aws_route_table" "public" {
 		cidr_block = "0.0.0.0/0"
 		gateway_id = "${aws_internet_gateway.default.id}"
 	}
-}
-
-resource "aws_route_table_association" "microbosh-public" {
-	subnet_id = "${aws_subnet.microbosh.id}"
-	route_table_id = "${aws_route_table.public.id}"
 }
 
 resource "aws_route_table_association" "lb-public" {
@@ -99,6 +97,11 @@ resource "aws_route_table_association" "bastion-public" {
 resource "aws_subnet" "cfruntime" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.1.0/24"
+}
+
+resource "aws_subnet" "microbosh" {
+	vpc_id = "${aws_vpc.default.id}"
+	cidr_block = "${var.network}.2.0/24"
 }
 
 resource "aws_subnet" "docker-services" {
@@ -122,6 +125,11 @@ resource "aws_route_table_association" "docker-services-private" {
 	route_table_id = "${aws_route_table.private.id}"
 }
 
+resource "aws_route_table_association" "microbosh-private" {
+	subnet_id = "${aws_subnet.microbosh.id}"
+	route_table_id = "${aws_route_table.private.id}"
+}
+
 resource "aws_route_table_association" "cfruntime-private" {
 	subnet_id = "${aws_subnet.cfruntime.id}"
 	route_table_id = "${aws_route_table.private.id}"
@@ -142,6 +150,10 @@ resource "aws_security_group" "bastion" {
 	vpc_id = "${aws_vpc.default.id}"
 }
 
+resource "aws_eip" "cf" {
+	vpc = true
+}
+
 resource "aws_instance" "bastion" {
 	ami = "${var.aws_ubuntu_ami}"
 	instance_type = "m1.medium"
@@ -155,8 +167,16 @@ resource "aws_instance" "bastion" {
   	key_file = "${var.aws_key_path}"
   }
 
+	provisioner "file" {
+		source = "scripts/provision.sh"
+		destination = "/home/ubuntu/provision.sh"
+  }
+
 	provisioner "remote-exec" {
-		script = "scripts/provision.sh"
+		inline = [
+			"chmod +x /home/ubuntu/provision.sh",
+			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.lb.id}",
+		]
   }
 
 }

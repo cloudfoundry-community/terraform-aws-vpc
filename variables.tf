@@ -6,10 +6,10 @@ variable "region" {
   default = "us-east-1"
 }
 variable "aws_nat_ami" {
-	default = "ami-49691279"
+	default = "ami-1d2b2958"
 }
 variable "aws_ubuntu_ami" {
-	default = "ami-37501207"
+	default = "ami-736e6536"
 }
 variable "network" {
 	default = "10.10"

@@ -11,3 +11,7 @@ apply:
 destroy:
 	terraform plan -destroy -var-file terraform.tfvars -out terraform.tfplan
 	terraform apply terraform.tfplan
+
+clean:
+	rm terraform.tfplan
+	rm terraform.tfstate
