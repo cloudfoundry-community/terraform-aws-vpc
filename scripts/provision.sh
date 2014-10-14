@@ -8,8 +8,9 @@ BOSH_SUBNET=$5
 IPMASK=$6
 CF_IP=$7
 CF_SUBNET=$8
-BASTION_AZ=$9
-BASTION_ID=${10}
+CF_SUBNET_AZ=$9
+BASTION_AZ=${10}
+BASTION_ID=${11}
 
 cd $HOME
 sudo apt-get update
@@ -88,7 +89,7 @@ git clone -b cf-terraform http://github.com/cloudfoundry-community/cf-boshworksp
 pushd cf-boshworkspace
 bundle install --path vendor/bundle
 mkdir -p ssh
-export REGION=${REGION}c
+export REGION=${CF_SUBNET_AZ}
 export CF_ELASTIC_IP=$CF_IP
 export SUBNET_ID=$CF_SUBNET
 export DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
