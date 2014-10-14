@@ -9,12 +9,21 @@ IPMASK=$6
 CP_IP=$7
 CF_SUBNET=$8
 BASTION_AZ=$9
-BASTION_ID=$10
+BASTION_ID=${10}
 
 cd $HOME
 sudo apt-get update
-sudo apt-get install -y git vim-nox build-essential libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libsqlite3-dev git
+sudo apt-get install -y git vim-nox build-essential libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libsqlite3-dev git unzip
 curl -sSL https://get.rvm.io | bash -s stable
+
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+pushd /tmp
+wget https://github.com/cloudfoundry-incubator/spiff/releases/download/v1.0.3/spiff_linux_amd64.zip
+unzip spiff_linux_amd64.zip
+sudo mv spiff /usr/local/bin/.
+popd
+
 source /home/ubuntu/.rvm/scripts/rvm
 rvm install ruby-2.1.3
 rvm alias create default ruby-2.1.3
@@ -75,10 +84,11 @@ bosh -n target https://10.50.2.4:25555
 bosh login admin admin
 popd
 
-git clone http://github.com/cloudfoundry-community/cf-boshworkspace
+git clone -b cf-terraform http://github.com/cloudfoundry-community/cf-boshworkspace
 pushd cf-boshworkspace
 bundle install --path vendor/bundle
 mkdir -p ssh
+export REGION=$REGIONc
 export CF_ELASTIC_IP=$CF_IP
 export SUBNET_ID=$CF_SUBNET
 export DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
@@ -90,6 +100,7 @@ done
 bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-189.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
+bundle exec bosh -n deploy
 popd
 
 

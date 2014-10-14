@@ -94,9 +94,14 @@ resource "aws_route_table_association" "bastion-public" {
 
 # Private subsets
 
-resource "aws_subnet" "cfruntime" {
+resource "aws_subnet" "cfruntime-2a" {
 	vpc_id = "${aws_vpc.default.id}"
-	cidr_block = "${var.network}.1.0/24"
+	cidr_block = "${var.network}.5.0/24"
+}
+
+resource "aws_subnet" "cfruntime-2b" {
+	vpc_id = "${aws_vpc.default.id}"
+	cidr_block = "${var.network}.6.0/24"
 }
 
 resource "aws_subnet" "microbosh" {
@@ -130,11 +135,15 @@ resource "aws_route_table_association" "microbosh-private" {
 	route_table_id = "${aws_route_table.private.id}"
 }
 
-resource "aws_route_table_association" "cfruntime-private" {
-	subnet_id = "${aws_subnet.cfruntime.id}"
+resource "aws_route_table_association" "cfruntime-2a-private" {
+	subnet_id = "${aws_subnet.cfruntime-2a.id}"
 	route_table_id = "${aws_route_table.private.id}"
 }
 
+resource "aws_route_table_association" "cfruntime-2b-private" {
+	subnet_id = "${aws_subnet.cfruntime-2b.id}"
+	route_table_id = "${aws_route_table.private.id}"
+}
 
 resource "aws_security_group" "bastion" {
 	name = "bastion"
@@ -175,7 +184,7 @@ resource "aws_instance" "bastion" {
 	provisioner "remote-exec" {
 		inline = [
 			"chmod +x /home/ubuntu/provision.sh",
-			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.lb.id} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id}",
+			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.cfruntime-2a.id} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id}",
 		]
   }
 
