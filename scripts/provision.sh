@@ -38,6 +38,7 @@ cat <<EOF > ~/.fog
 :default:
     :aws_access_key_id: $1
     :aws_secret_access_key: $2
+    :region: $3
 EOF
 
 bosh-bootstrap deploy
