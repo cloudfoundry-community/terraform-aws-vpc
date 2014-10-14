@@ -91,14 +91,15 @@ pushd cf-boshworkspace
 bundle install --path vendor/bundle
 mkdir -p ssh
 export REGION=${CF_SUBNET_AZ}
-export CF_ELASTIC_IP=$CF_IP
-export SUBNET_ID=$CF_SUBNET
+export CF_ELASTIC_IP=${CF_IP}
+export SUBNET_ID=${CF_SUBNET}
 export DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 for VAR in CF_ELASTIC_IP SUBNET_ID DIRECTOR_UUID REGION
 do
   eval REP=\$$VAR
   perl -pi -e "s/$VAR/$REP/g" deployments/cf-aws-vpc.yml
 done
+/bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-aws-networking.yml
 bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-189.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
