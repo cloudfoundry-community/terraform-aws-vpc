@@ -82,7 +82,7 @@ EOF
 
 bosh-bootstrap deploy
 
-bosh -n target https://10.50.2.4:25555
+bosh -n target https://${IPMASK}.2.4:25555
 bosh login admin admin
 popd
 
