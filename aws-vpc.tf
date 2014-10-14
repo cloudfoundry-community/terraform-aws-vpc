@@ -175,7 +175,7 @@ resource "aws_instance" "bastion" {
 	provisioner "remote-exec" {
 		inline = [
 			"chmod +x /home/ubuntu/provision.sh",
-			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.lb.id}",
+			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.lb.id} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id}",
 		]
   }
 

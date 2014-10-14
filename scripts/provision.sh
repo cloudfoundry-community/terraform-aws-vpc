@@ -8,6 +8,8 @@ BOSH_SUBNET=$5
 IPMASK=$6
 CP_IP=$7
 CF_SUBNET=$8
+BASTION_AZ=$9
+BASTION_ID=$10
 
 cd $HOME
 sudo apt-get update
@@ -27,6 +29,24 @@ cat <<EOF > ~/.fog
     :aws_secret_access_key: $AWS_ACCESS_KEY
     :region: $REGION
 EOF
+
+gem install fog
+cat <<EOF > /tmp/attach_volume.rb
+require 'fog'
+
+connection = Fog::Compute.new(:provider => 'AWS')
+vol = connection.create_volume("$BASTION_AZ", 40)
+sleep 10 #FIXME, probably with a loop that checks output or something
+connection.attach_volume("$BASTION_ID", vol.data[:body]["volumeId"], "xvdc")
+EOF
+ruby /tmp/attach_volume.rb
+sudo /sbin/mkfs.ext4 /dev/xvdc
+sudo /sbin/e2label /dev/xvdc workspace
+echo 'LABEL=workspace /home/ubuntu/workspace ext4 defaults,discard 0 0' | sudo tee -a /etc/fstab
+mkdir -p /home/ubuntu/workspace
+sudo mount -a
+sudo chown -R ubuntu:ubuntu /home/ubuntu/workspace
+
 gem install bundler
 mkdir -p {bin,workspace/deployments,workspace/tools}
 pushd workspace/deployments
