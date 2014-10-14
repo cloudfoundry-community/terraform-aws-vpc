@@ -50,6 +50,7 @@ sleep 10 #FIXME, probably with a loop that checks output or something
 connection.attach_volume("$BASTION_ID", vol.data[:body]["volumeId"], "xvdc")
 EOF
 ruby /tmp/attach_volume.rb
+sleep 10
 sudo /sbin/mkfs.ext4 /dev/xvdc
 sudo /sbin/e2label /dev/xvdc workspace
 echo 'LABEL=workspace /home/ubuntu/workspace ext4 defaults,discard 0 0' | sudo tee -a /etc/fstab
