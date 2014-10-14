@@ -167,7 +167,7 @@ resource "aws_instance" "bastion" {
 	ami = "${var.aws_ubuntu_ami}"
 	instance_type = "m1.medium"
 	key_name = "${var.aws_key_name}"
-	associate_public_ip_address = "true"
+	associate_public_ip_address = true
 	security_groups = ["${aws_security_group.bastion.id}"]
 	subnet_id = "${aws_subnet.bastion.id}"
 
