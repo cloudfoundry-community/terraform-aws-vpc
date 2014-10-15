@@ -6,6 +6,9 @@ provider "aws" {
 
 resource "aws_vpc" "default" {
 	cidr_block = "${var.network}.0.0/16"
+	tags {
+		Name = "cf-vpc"
+	}
 }
 
 resource "aws_internet_gateway" "default" {
@@ -39,6 +42,10 @@ resource "aws_security_group" "nat" {
 		cidr_blocks = ["0.0.0.0/0"]
 	}
 
+	tags {
+		Name = "nat"
+	}
+
 	vpc_id = "${aws_vpc.default.id}"
 }
 
@@ -50,6 +57,9 @@ resource "aws_instance" "nat" {
 	subnet_id = "${aws_subnet.bastion.id}"
 	associate_public_ip_address = true
 	source_dest_check = false
+	tags {
+		Name = "nat"
+	}
 }
 
 resource "aws_eip" "nat" {
@@ -109,11 +119,6 @@ resource "aws_subnet" "microbosh" {
 	cidr_block = "${var.network}.2.0/24"
 }
 
-resource "aws_subnet" "docker-services" {
-	vpc_id = "${aws_vpc.default.id}"
-	cidr_block = "${var.network}.4.0/24"
-}
-
 # Routing table for private subnets
 
 resource "aws_route_table" "private" {
@@ -123,11 +128,6 @@ resource "aws_route_table" "private" {
 		cidr_block = "0.0.0.0/0"
 		instance_id = "${aws_instance.nat.id}"
 	}
-}
-
-resource "aws_route_table_association" "docker-services-private" {
-	subnet_id = "${aws_subnet.docker-services.id}"
-	route_table_id = "${aws_route_table.private.id}"
 }
 
 resource "aws_route_table_association" "microbosh-private" {
@@ -156,6 +156,64 @@ resource "aws_security_group" "bastion" {
 		cidr_blocks = ["0.0.0.0/0"]
 	}
 
+	tags {
+		Name = "bastion"
+	}
+
+	vpc_id = "${aws_vpc.default.id}"
+}
+
+resource "aws_security_group" "cf" {
+	name = "cf"
+	description = "CF security groups"
+
+	ingress {
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 443
+		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = 4443
+		to_port = 4443
+		protocol = "tcp"
+	}
+
+
+	ingress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = -1
+		to_port = -1
+		protocol = "icmp"
+	}
+
+	ingress {
+		from_port = 0
+		to_port = 65535
+		protocol = "tcp"
+		self = "true"
+	}
+
+	tags {
+		Name = "cf"
+	}
+
 	vpc_id = "${aws_vpc.default.id}"
 }
 
@@ -170,6 +228,10 @@ resource "aws_instance" "bastion" {
 	associate_public_ip_address = true
 	security_groups = ["${aws_security_group.bastion.id}"]
 	subnet_id = "${aws_subnet.bastion.id}"
+
+	tags {
+		Name = "inception server"
+	}
 
 	connection {
   	user = "ubuntu"
