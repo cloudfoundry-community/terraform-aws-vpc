@@ -13,9 +13,41 @@ resource "aws_internet_gateway" "default" {
 }
 
 
+
+# NAT instance
+
+resource "aws_security_group" "nat" {
+	name = "nat"
+	description = "Allow services from the private subnet through NAT"
+
+	ingress {
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 443
+		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	vpc_id = "${aws_vpc.default.id}"
+}
+
 resource "aws_security_group" "cf" {
 	name = "cf"
-	description = "Allow services to hit Cloud Foundry servers"
+	description = "Allow CF to work"
+	vpc_id = "${aws_vpc.default.id}"
 
 	ingress {
 		from_port = 22
@@ -48,39 +80,7 @@ resource "aws_security_group" "cf" {
 		self = true
 	}
 
-	vpc_id = "${aws_vpc.default.id}"
 }
-
-# NAT instance
-
-resource "aws_security_group" "nat" {
-	name = "nat"
-	description = "Allow services from the private subnet through NAT"
-
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-	ingress {
-		from_port = 80
-		to_port = 80
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-	ingress {
-		from_port = 443
-		to_port = 443
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-	vpc_id = "${aws_vpc.default.id}"
-}
-
 resource "aws_instance" "nat" {
 	ami = "${var.aws_nat_ami}"
 	instance_type = "t2.small"
