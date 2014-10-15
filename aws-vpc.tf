@@ -45,6 +45,13 @@ resource "aws_security_group" "nat" {
 		cidr_blocks = ["0.0.0.0/0"]
 	}
 
+	ingress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = -1
+		to_port = -1
+		protocol = "icmp"
+	}
+
 	tags {
 		Name = "nat"
 	}
