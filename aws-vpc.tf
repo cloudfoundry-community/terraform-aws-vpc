@@ -22,6 +22,7 @@ resource "aws_internet_gateway" "default" {
 resource "aws_security_group" "nat" {
 	name = "nat"
 	description = "Allow services from the private subnet through NAT"
+	vpc_id = "${aws_vpc.default.id}"
 
 	ingress {
 		from_port = 22
@@ -48,46 +49,8 @@ resource "aws_security_group" "nat" {
 		Name = "nat"
 	}
 
-	vpc_id = "${aws_vpc.default.id}"
 }
 
-resource "aws_security_group" "cf" {
-	name = "cf"
-	description = "Allow CF to work"
-	vpc_id = "${aws_vpc.default.id}"
-
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-	ingress {
-		from_port = 80
-		to_port = 80
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-	ingress {
-		from_port = 443
-		to_port = 443
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-	ingress {
-		from_port = 4443
-		to_port = 4443
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-	ingress {
-		from_port = 0
-		to_port = 65535
-		protocol = "tcp"
-		self = true
-	}
-
-}
 resource "aws_instance" "nat" {
 	ami = "${var.aws_nat_ami}"
 	instance_type = "t2.small"
@@ -187,6 +150,7 @@ resource "aws_route_table_association" "cfruntime-2b-private" {
 resource "aws_security_group" "bastion" {
 	name = "bastion"
 	description = "Allow SSH traffic from the internet"
+	vpc_id = "${aws_vpc.default.id}"
 
 	ingress {
 		from_port = 22
@@ -199,12 +163,12 @@ resource "aws_security_group" "bastion" {
 		Name = "bastion"
 	}
 
-	vpc_id = "${aws_vpc.default.id}"
 }
 
 resource "aws_security_group" "cf" {
 	name = "cf"
 	description = "CF security groups"
+	vpc_id = "${aws_vpc.default.id}"
 
 	ingress {
 		from_port = 22
@@ -253,7 +217,6 @@ resource "aws_security_group" "cf" {
 		Name = "cf"
 	}
 
-	vpc_id = "${aws_vpc.default.id}"
 }
 
 resource "aws_eip" "cf" {
