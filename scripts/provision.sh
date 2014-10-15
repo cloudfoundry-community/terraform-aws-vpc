@@ -11,6 +11,7 @@ CF_SUBNET=${8}
 CF_SUBNET_AZ=${9}
 BASTION_AZ=${10}
 BASTION_ID=${11}
+LB_SUBNET=${12}
 
 cd $HOME
 sudo apt-get update
@@ -100,6 +101,9 @@ do
   perl -pi -e "s/$VAR/$REP/g" deployments/cf-aws-vpc.yml
 done
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-aws-networking.yml
+/bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-use-haproxy.yml
+/bin/sed -i "s/LB_SUBNET/${LB_SUBNET}/g" templates/cf-use-haproxy.yml
+
 bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-189.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
