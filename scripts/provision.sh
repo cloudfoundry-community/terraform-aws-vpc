@@ -58,6 +58,9 @@ echo 'LABEL=workspace /home/ubuntu/workspace ext4 defaults,discard 0 0' | sudo t
 mkdir -p /home/ubuntu/workspace
 sudo mount -a
 sudo chown -R ubuntu:ubuntu /home/ubuntu/workspace
+sudo rsync -avq /tmp/ /home/ubuntu/workspace/tmp/
+sudo rm -fR /tmp 
+sudo ln -s /home/ubuntu/workspace/tmp /tmp
 
 gem install bundler
 mkdir -p {bin,workspace/deployments,workspace/tools}
