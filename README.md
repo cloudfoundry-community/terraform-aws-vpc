@@ -1,113 +1,23 @@
 # terraform-cf-aws-vpc
 
-This goal of this project is to easily spin up an [Amazon Web Services](http://aws.amazon.com/) (AWS) [Virtual Private Cloud](http://aws.amazon.com/vpc/) (VPC) using [Terraform](http://terraform.io). This setup VPC network for setting up Cloud Foundry.
+This project aims to create one click deploy for Cloud Foundry on AWS VPC.
 
-## Configuration
+## Architecture
+![](https://photos-4.dropbox.com/t/1/AAB8vXYiZDHSbE9aQqN4X9Y01lqA5CzsyPNm2-34UbXVyg/12/44300853/jpeg/1024x768/3/1413572400/0/2/cf_vpc.jpg/AYKsL9W9noKPtwL0zdQ8PxfERv3yXKefEN4yRCNM2hU)
 
-The project root contains a file named `terraform.tfvars.example`. Rename that file to `terraform.tfvars` and populate it with your AWS credentials:
+## Deploy Cloud Foundry
 
-```bash
-$ mv terraform.tfvars.example terraform.tfvars
-$ vim terraform.tfvars
-```
+The one step that isn't automated is the creation of SSH keys. Waiting for feature to be added to terraform.
+An AWS SSH Key need to be created in desired region prior to running the following commands.
 
-There is also a `variables.tf` at the project root. It contains a listing of all the Terraform variables. Some defaults are set there as well. If you want to override any of them, override them in `terraform.tfvars`.
+**NOTE**: Security group tags are needed and PR is awaiting to be merged in. A version of terraform has been build with this feature.
 
-## Usage
+OSX: [Terraform](https://www.dropbox.com/s/b146qmdvesgvnxd/terraform.tar.gz?dl=0 )
 
-All of the interactions with Terraform are wrapped in a `Makefile`. It contains targets for planning, applying, and destroying changes to your AWS infrastructure.
-
-### Plan
-
-The plan phase takes your Terraform configuration and attempts to provide you with a plan of what it **would** do if you applied it. It outputs an execution plan to `stdout` along a `terraform.tfplan` file (not human-readable).
+If a linux or window version is needed please email long@starkandwayne.com and I can create them for you.
 
 ```bash
-$ make plan
-Refreshing Terraform state prior to plan...
-
-The Terraform execution plan has been generated and is shown below.
-Resources are shown in alphabetical order for quick scanning. Green resources
-will be created (or destroyed and then created if an existing resource
-exists), yellow resources are being changed in-place, and red resources
-will be destroyed.
-
-Your plan was also saved to the path below. Call the "apply" subcommand
-with this plan file and Terraform will exactly execute this execution
-plan.
-
-Path: terraform.tfplan
+mkdir terraform-cf
+cd terraform-cf
+terraform apply github.com/cloudfoundry-community/terraform-cf-aws-vpc
 ```
-
-### Apply
-
-The apply phase simply takes the Terraform execution plan and attempts to execute it. It outputs its progress to `stdout` along a `terraform.tfstate` file (not human-readable).
-
-```bash
-$ make apply
-aws_vpc.default: Creating...
-  cidr_block: "" => "10.0.0.0/16"
-aws_vpc.default: Creation complete
-
-Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
-
-The state of your infrastructure has been saved to the path
-below. This state is required to modify and destroy your
-infrastructure, so keep it safe. To inspect the complete state
-use the `terraform show` command.
-
-State path: terraform.tfstate
-```
-
-### Destroy
-
-The destroy phase happens in two steps. First, Terraform generates a destroy execution plan, and then applies it. It outputs an execution plan to `stdout` along a new `terraform.tfplan` file. After that, it attempts to apply the destroy execution plan.
-
-```bash
-$ make destroy
-Refreshing Terraform state prior to plan...
-
-aws_vpc.default: Refreshing state... (ID: vpc-20bf1d45)
-
-The Terraform execution plan has been generated and is shown below.
-Resources are shown in alphabetical order for quick scanning. Green resources
-will be created (or destroyed and then created if an existing resource
-exists), yellow resources are being changed in-place, and red resources
-will be destroyed.
-
-Your plan was also saved to the path below. Call the "apply" subcommand
-with this plan file and Terraform will exactly execute this execution
-plan.
-
-Path: terraform.tfplan
-
-- aws_vpc.default
-
-
-aws_vpc.default: Destroying...
-aws_vpc.default: Destruction complete
-
-Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
-```
-
-**Note**: The `destroy` step usually has to be run more than once because of an issue with deleting the Elastic IP (EIP) before it is unbound from the NAT instance. Run `make destroy` again after the failure to complete the destroy phase.
-
-## Next Steps
-
-### Inception Server
-This setup the network for VPC for Cloud Foundry. Next an 'inception' server is needed as a jump box to get into VPC
-
-Refer to https://github.com/cloudfoundry-community/inception-server for following steps
-
-### Microbosh
-
-Once you have inception server you can setup microbosh using the inception server
-
-Refer to https://github.com/cloudfoundry-community/bosh-bootstrap for following steps
-
-### Cloud Foundry
-
-Now it's time to setup Cloud Foundry!
-
-Refer to https://github.com/starkandwayne/cf-boshworkspace for steps on setting up Cloud Foundry
-
-And you should have Cloud Foundry running on VPC!
