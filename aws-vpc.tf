@@ -66,7 +66,7 @@ resource "aws_security_group" "nat" {
 }
 
 resource "aws_instance" "nat" {
-	ami = "${var.aws_nat_ami}"
+	ami = "${lookup(var.aws_nat_ami, var.region)}"
 	instance_type = "t2.small"
 	key_name = "${var.aws_key_name}"
 	security_groups = ["${aws_security_group.nat.id}"]
@@ -238,7 +238,7 @@ resource "aws_eip" "cf" {
 }
 
 resource "aws_instance" "bastion" {
-	ami = "${var.aws_ubuntu_ami}"
+	ami = "${lookup(var.aws_ubuntu_ami, var.region)}"
 	instance_type = "m1.medium"
 	key_name = "${var.aws_key_name}"
 	associate_public_ip_address = true

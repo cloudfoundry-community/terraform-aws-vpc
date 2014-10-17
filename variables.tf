@@ -8,9 +8,32 @@ variable "region" {
 variable "aws_nat_ami" {
 	default = "ami-1d2b2958"
 }
-variable "aws_ubuntu_ami" {
-	default = "ami-736e6536"
-}
 variable "network" {
 	default = "10.10"
+}
+
+variable "aws_ubuntu_ami" {
+    default = {
+        us-east-1 = "ami-98aa1cf0"
+        us-west-1 = "ami-736e6536"
+        us-west-2 = "ami-37501207"
+        ap-northeast-1 = "ami-df4b60de"
+        ap-southeast-1 = "ami-2ce7c07e"
+        ap-southeast-2 = "ami-1f117325"
+        eu-west-1 = "ami-f6b11181"
+        sa-east-1 = "ami-71d2676c"
+    }
+}
+
+variable "aws_nat_ami" {
+    default = {
+        us-east-1 = "ami-4c9e4b24"
+        us-west-1 = "ami-1d2b2958"
+        us-west-2 = "ami-8b6912bb"
+        ap-northeast-1 = "ami-49c29e48"
+        ap-southeast-1 = "ami-d482da86"
+        ap-southeast-2 = "ami-a164029b"
+        eu-west-1 = "ami-5b60b02c"
+        sa-east-1 = "ami-8b72db96"
+    }
 }
