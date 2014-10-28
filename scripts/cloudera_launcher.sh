@@ -27,6 +27,7 @@ sed -i "s/KEYNAME-CFN-REPLACE/${KEYNAME}/" /home/ec2-user/cloudera/download.sh
 sed -i "s/HADOOPINSTANCE-COUNT-CFN-REPLACE/${HADOOP_INSTANCE_COUNT}/" /home/ec2-user/cloudera/download.sh
 sed -i "s/HADOOPINSTANCE-TYPE-CFN-REPLACE/${HADOOP_INSTANCE_TYPE}/" /home/ec2-user/cloudera/download.sh
 
+sed -i "s/, HBASE/, HBASE, SPARK/" /home/ec2-user/cloudera/download.sh
 
 sudo /bin/sh /home/ec2-user/cloudera/download.sh
 sudo /bin/sh /home/ec2-user/cloudera/cleanup.sh
