@@ -28,8 +28,8 @@ sed -i "s/HADOOPINSTANCE-COUNT-CFN-REPLACE/${HADOOP_INSTANCE_COUNT}/" /home/ec2-
 sed -i "s/HADOOPINSTANCE-TYPE-CFN-REPLACE/${HADOOP_INSTANCE_TYPE}/" /home/ec2-user/cloudera/download.sh
 
 
-/bin/sh /home/ec2-user/cloudera/download.sh
-/bin/sh /home/ec2-user/cloudera/cleanup.sh
+sudo /bin/sh /home/ec2-user/cloudera/download.sh
+sudo /bin/sh /home/ec2-user/cloudera/cleanup.sh
 
 sed -i "s#privateKey-REPLACE-ME#/home/ec2-user/.ssh/cloudera.pem#" /home/ec2-user/cloudera/cloudera-director-1*/aws.simple.conf
 sed -i "s/# associatePublicIpAddresses: true/associatePublicIpAddresses: false/" /home/ec2-user/cloudera/cloudera-director-1*/aws.simple.conf
