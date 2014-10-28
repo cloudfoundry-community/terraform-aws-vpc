@@ -12,6 +12,13 @@ variable "network" {
 	default = "10.10"
 }
 
+variable "hadoop_instance_count" {
+	default = "5"
+}
+variable "hadoop_instance_type" {
+	default = "m3.2xlarge"
+}
+
 variable "aws_ubuntu_ami" {
     default = {
         us-east-1 = "ami-98aa1cf0"
@@ -22,6 +29,19 @@ variable "aws_ubuntu_ami" {
         ap-southeast-2 = "ami-1f117325"
         eu-west-1 = "ami-f6b11181"
         sa-east-1 = "ami-71d2676c"
+    }
+}
+
+variable "aws_centos_ami" {
+    default = {
+        us-east-1 = "ami-00a11e68"
+        us-west-1 = "ami-ba3c3bff"
+        us-west-2 = "ami-3425be04"
+        ap-northeast-1 = "ami-9392dc92"
+        ap-southeast-1 = "ami-dcbeed8e"
+        ap-southeast-2 = "ami-89e88db3"
+        eu-west-1 = "ami-af6faad8"
+        sa-east-1 = "ami-73ee416e"
     }
 }
 
