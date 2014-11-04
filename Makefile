@@ -3,6 +3,7 @@
 all: plan apply
 
 plan:
+	terraform get -update
 	terraform plan -var-file terraform.tfvars -out terraform.tfplan
 
 apply:
