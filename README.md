@@ -10,11 +10,7 @@ This project aims to create one click deploy for Cloud Foundry on AWS VPC.
 The one step that isn't automated is the creation of SSH keys. Waiting for feature to be added to terraform.
 An AWS SSH Key need to be created in desired region prior to running the following commands.
 
-**NOTE**: Security group tags are needed and PR is awaiting to be merged in. A version of terraform has been build with this feature.
-
-OSX: [Terraform](https://www.dropbox.com/s/b146qmdvesgvnxd/terraform.tar.gz?dl=0 )
-
-If a linux or window version is needed please email long@starkandwayne.com and I can create them for you.
+**NOTE**: You **must** being using at least terraform 0.3.1 for the tags to work.
 
 ```bash
 mkdir terraform-cf
