@@ -266,7 +266,7 @@ resource "aws_instance" "bastion" {
   }
 
 	provisioner "file" {
-		source = "scripts/provision.sh"
+		source = "${path.module}/scripts/provision.sh"
 		destination = "/home/ubuntu/provision.sh"
   }
 
