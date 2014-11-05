@@ -12,13 +12,6 @@ variable "network" {
 	default = "10.10"
 }
 
-variable "hadoop_instance_count" {
-	default = "5"
-}
-variable "hadoop_instance_type" {
-	default = "m3.2xlarge"
-}
-
 variable "aws_ubuntu_ami" {
     default = {
         us-east-1 = "ami-98aa1cf0"

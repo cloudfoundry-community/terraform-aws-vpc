@@ -12,6 +12,10 @@ resource "aws_vpc" "default" {
 	}
 }
 
+output "aws_default_vpc" {
+	value = "${aws_vpc.default.id}"
+}
+
 resource "aws_internet_gateway" "default" {
 	vpc_id = "${aws_vpc.default.id}"
 }
@@ -91,6 +95,10 @@ resource "aws_subnet" "bastion" {
 	cidr_block = "${var.network}.0.0/24"
 }
 
+output "bastion_subnet" {
+	value = "${aws_subnet.bastion.id}"
+}
+
 resource "aws_subnet" "lb" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.3.0/24"
@@ -143,6 +151,10 @@ resource "aws_route_table" "private" {
 		cidr_block = "0.0.0.0/0"
 		instance_id = "${aws_instance.nat.id}"
 	}
+}
+
+output "private_route_table" {
+  value = "${aws_route_table.private.id}"
 }
 
 resource "aws_route_table_association" "microbosh-private" {
@@ -265,14 +277,4 @@ resource "aws_instance" "bastion" {
 		]
   }
 
-}
-
-module "cloudera" {
-  source = "./cloudera"
-  network = "${var.network}"
-  aws_centos_ami = "${lookup(var.aws_centos_ami, var.aws_region)}"
-  aws_key_name = "${var.aws_key_name}"
-  aws_vpc = "${aws_vpc.default.id}"
-  aws_route_table_private = "${aws_route_table.private.id}"
-  aws_subnet_bastion = "${aws_subnet.bastion.id}"
 }
