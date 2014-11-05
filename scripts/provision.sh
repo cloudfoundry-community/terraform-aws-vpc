@@ -18,6 +18,7 @@ LB_SUBNET=${12}
 cd $HOME
 sudo apt-get update
 sudo apt-get install -y git vim-nox build-essential libxml2-dev libxslt-dev libmysqlclient-dev libpq-dev libsqlite3-dev git unzip
+gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 curl -sSL https://get.rvm.io | bash -s stable
 
 # Generate the key that will be used to ssh between the inception server and the
