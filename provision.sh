@@ -134,7 +134,7 @@ DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 /bin/sed -i "s/LB_SUBNET/${LB_SUBNET}/g" templates/cf-use-haproxy.yml
 
 # Upload the bosh release, set the deployment, and execute 
-bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-189.tgz
+bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-191.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
 bundle exec bosh -n deploy
