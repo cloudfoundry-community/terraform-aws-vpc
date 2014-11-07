@@ -13,6 +13,7 @@ CF_SUBNET_AZ=${9}
 BASTION_AZ=${10}
 BASTION_ID=${11}
 LB_SUBNET=${12}
+CF_DOMAIN=${13}
 
 # Prepare the jumpbox to be able to install ruby and git-based bosh and cf repos
 cd $HOME
@@ -124,6 +125,7 @@ mkdir -p ssh
 DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 
 # This is some hackwork to get the configs right. Could be changed in the future
+/bin/sed -i "s/CF_DOMAIN/${CF_DOMAIN}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/REGION/${CF_SUBNET_AZ}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/CF_ELASTIC_IP/${CF_IP}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/SUBNET_ID/${CF_SUBNET}/g" deployments/cf-aws-vpc.yml
