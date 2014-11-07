@@ -93,6 +93,7 @@ resource "aws_eip" "nat" {
 resource "aws_subnet" "bastion" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.0.0/24"
+	availability_zone = "${var.aws_availability_zone}"
 }
 
 output "bastion_subnet" {
@@ -102,6 +103,7 @@ output "bastion_subnet" {
 resource "aws_subnet" "lb" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.3.0/24"
+	availability_zone = "${var.aws_availability_zone}"
 }
 
 # Routing table for public subnets
@@ -130,16 +132,19 @@ resource "aws_route_table_association" "bastion-public" {
 resource "aws_subnet" "cfruntime-2a" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.5.0/24"
+	availability_zone = "${var.aws_availability_zone}"
 }
 
 resource "aws_subnet" "cfruntime-2b" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.6.0/24"
+	availability_zone = "${var.aws_availability_zone}"
 }
 
 resource "aws_subnet" "microbosh" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.2.0/24"
+	availability_zone = "${var.aws_availability_zone}"
 }
 
 # Routing table for private subnets
