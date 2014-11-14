@@ -32,7 +32,7 @@ variable "aws_ubuntu_ami" {
 variable "aws_centos_ami" {
     default = {
         us-east-1 = "ami-00a11e68"
-        us-west-1 = "ami-ba3c3bff"
+        us-west-1 = "ami-e04b7aa5"
         us-west-2 = "ami-3425be04"
         ap-northeast-1 = "ami-9392dc92"
         ap-southeast-1 = "ami-dcbeed8e"
