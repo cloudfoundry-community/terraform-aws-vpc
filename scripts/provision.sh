@@ -132,6 +132,7 @@ DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 /bin/sed -i "s/CF_ELASTIC_IP/${CF_IP}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/SUBNET_ID/${CF_SUBNET}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/DIRECTOR_UUID/${DIRECTOR_UUID}/g" deployments/cf-aws-vpc.yml
+/bin/sed -i "s/CF_DOMAIN/${CF_IP}.xip.io/g" deployments/cf-aws-vpc.yml
 
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-aws-networking.yml
 /bin/sed -i "s/CF_SG/${CF_SG}/g" templates/cf-aws-networking.yml

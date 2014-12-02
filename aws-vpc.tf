@@ -224,6 +224,12 @@ resource "aws_security_group" "cf" {
 		protocol = "tcp"
 	}
 
+	ingress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = 4222
+		to_port = 25777
+		protocol = "tcp"
+	}
 
 	ingress {
 		cidr_blocks = ["0.0.0.0/0"]
