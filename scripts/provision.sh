@@ -136,6 +136,7 @@ DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-aws-networking.yml
 /bin/sed -i "s/CF_SG/${CF_SG}/g" templates/cf-aws-networking.yml
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-use-haproxy.yml
+/bin/sed -i "s/CF_SG/${CF_SG}/g" templates/cf-use-haproxy.yml
 /bin/sed -i "s/LB_SUBNET/${LB_SUBNET}/g" templates/cf-use-haproxy.yml
 
 # Upload the bosh release, set the deployment, and execute
