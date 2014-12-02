@@ -191,7 +191,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_security_group" "cf" {
-	name = "cf"
+	name = "cf-${aws_vpc.default.id}"
 	description = "CF security groups"
 	vpc_id = "${aws_vpc.default.id}"
 
@@ -273,7 +273,7 @@ resource "aws_instance" "bastion" {
 	provisioner "remote-exec" {
 		inline = [
 			"chmod +x /home/ubuntu/provision.sh",
-			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.aws_region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.cfruntime-2a.id} ${aws_subnet.cfruntime-2a.availability_zone} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id} ${aws_subnet.lb.id}",
+			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.aws_region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.cfruntime-2a.id} ${aws_subnet.cfruntime-2a.availability_zone} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id} ${aws_subnet.lb.id} ${aws_security_group.cf.name}" ,
 		]
   }
 
