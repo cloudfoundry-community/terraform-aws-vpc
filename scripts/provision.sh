@@ -141,10 +141,10 @@ DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 /bin/sed -i "s/LB_SUBNET/${LB_SUBNET}/g" templates/cf-use-haproxy.yml
 
 # Upload the bosh release, set the deployment, and execute
-bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-189.tgz
+bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-194.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
 bundle exec bosh -n deploy
 # Speaking of hack-work, bosh deploy often fails the first time, due to packet bats
-# We run it twice (it's idempotent) so that you don't have to
 bundle exec bosh -n deploy
+# We run it twice (it's idempotent) so that you don't have to
