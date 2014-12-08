@@ -5,9 +5,6 @@ variable "aws_key_name" {}
 variable "aws_region" {
   default = "us-west-2"
 }
-variable "aws_availability_zone" {
-  default = "us-west-2c"
-}
 variable "aws_nat_ami" {
 	default = "ami-1d2b2958"
 }
