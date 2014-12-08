@@ -132,7 +132,6 @@ resource "aws_route_table_association" "bastion-public" {
 resource "aws_subnet" "cfruntime-2a" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.5.0/24"
-	availability_zone = "${aws_subnet.lb.availability_zone}"
 }
 
 resource "aws_subnet" "cfruntime-2b" {
