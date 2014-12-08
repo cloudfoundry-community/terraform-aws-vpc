@@ -132,7 +132,7 @@ resource "aws_route_table_association" "bastion-public" {
 resource "aws_subnet" "cfruntime-2a" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.5.0/24"
-	availability_zone = "${var.aws_availability_zone}"
+	availability_zone = "${aws_subnet.lb.availability_zone}"
 }
 
 resource "aws_subnet" "cfruntime-2b" {
@@ -196,7 +196,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_security_group" "cf" {
-	name = "cf"
+	name = "cf-${aws_vpc.default.id}"
 	description = "CF security groups"
 	vpc_id = "${aws_vpc.default.id}"
 
@@ -228,6 +228,12 @@ resource "aws_security_group" "cf" {
 		protocol = "tcp"
 	}
 
+	ingress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = 4222
+		to_port = 25777
+		protocol = "tcp"
+	}
 
 	ingress {
 		cidr_blocks = ["0.0.0.0/0"]
@@ -240,6 +246,13 @@ resource "aws_security_group" "cf" {
 		from_port = 0
 		to_port = 65535
 		protocol = "tcp"
+		self = "true"
+	}
+
+	ingress {
+		from_port = 0
+		to_port = 65535
+		protocol = "udp"
 		self = "true"
 	}
 
@@ -278,7 +291,7 @@ resource "aws_instance" "bastion" {
 	provisioner "remote-exec" {
 		inline = [
 			"chmod +x /home/ubuntu/provision.sh",
-			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.aws_region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.cfruntime-2a.id} ${aws_subnet.cfruntime-2a.availability_zone} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id} ${aws_subnet.lb.id} ${var.cf_domain}",
+			"/home/ubuntu/provision.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.aws_region} ${aws_vpc.default.id} ${aws_subnet.microbosh.id} ${var.network} ${aws_eip.cf.public_ip} ${aws_subnet.cfruntime-2a.id} ${aws_subnet.cfruntime-2a.availability_zone} ${aws_instance.bastion.availability_zone} ${aws_instance.bastion.id} ${aws_subnet.lb.id} ${aws_security_group.cf.name}" ,
 		]
   }
 

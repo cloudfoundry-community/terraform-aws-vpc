@@ -13,7 +13,7 @@ CF_SUBNET_AZ=${9}
 BASTION_AZ=${10}
 BASTION_ID=${11}
 LB_SUBNET=${12}
-CF_DOMAIN=${13}
+CF_SG=${13}
 
 # Prepare the jumpbox to be able to install ruby and git-based bosh and cf repos
 cd $HOME
@@ -78,17 +78,20 @@ sudo chown -R ubuntu:ubuntu /home/ubuntu/workspace
 # As long as we have a large volume to work with, we'll move /tmp over there
 # You can always use a bigger /tmp
 sudo rsync -avq /tmp/ /home/ubuntu/workspace/tmp/
-sudo rm -fR /tmp 
+sudo rm -fR /tmp
 sudo ln -s /home/ubuntu/workspace/tmp /tmp
 
 # bosh-bootstrap handles provisioning the microbosh machine and installing bosh
 # on it. This is very nice of bosh-bootstrap. Everyone make sure to thank bosh-bootstrap
 mkdir -p {bin,workspace/deployments,workspace/tools,workspace/deployments/bosh-bootstrap}
-pushd workspace/deployments 
+pushd workspace/deployments
 pushd bosh-bootstrap
-gem install bosh-bootstrap bosh_cli
+bundle install
+gem install bosh-bootstrap bosh_cli -f
 cat <<EOF > settings.yml
 ---
+bosh:
+  name: ${VPC}-keypair
 provider:
   name: aws
   credentials:
@@ -120,7 +123,7 @@ pushd cf-boshworkspace
 bundle install --path vendor/bundle
 mkdir -p ssh
 
-# Pull out the UUID of the director - bosh_cli needs it in the deployment to 
+# Pull out the UUID of the director - bosh_cli needs it in the deployment to
 # know it's hitting the right microbosh instance
 DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 
@@ -130,16 +133,19 @@ DIRECTOR_UUID=$(bundle exec bosh status | grep UUID | awk '{print $2}')
 /bin/sed -i "s/CF_ELASTIC_IP/${CF_IP}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/SUBNET_ID/${CF_SUBNET}/g" deployments/cf-aws-vpc.yml
 /bin/sed -i "s/DIRECTOR_UUID/${DIRECTOR_UUID}/g" deployments/cf-aws-vpc.yml
+/bin/sed -i "s/CF_DOMAIN/${CF_IP}.xip.io/g" deployments/cf-aws-vpc.yml
 
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-aws-networking.yml
+/bin/sed -i "s/CF_SG/${CF_SG}/g" templates/cf-aws-networking.yml
 /bin/sed -i "s/IPMASK/${IPMASK}/g" templates/cf-use-haproxy.yml
+/bin/sed -i "s/CF_SG/${CF_SG}/g" templates/cf-use-haproxy.yml
 /bin/sed -i "s/LB_SUBNET/${LB_SUBNET}/g" templates/cf-use-haproxy.yml
 
-# Upload the bosh release, set the deployment, and execute 
-bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-191.tgz
+# Upload the bosh release, set the deployment, and execute
+bundle exec bosh upload release https://community-shared-boshreleases.s3.amazonaws.com/boshrelease-cf-194.tgz
 bundle exec bosh deployment cf-aws-vpc
 bundle exec bosh prepare deployment
 bundle exec bosh -n deploy
 # Speaking of hack-work, bosh deploy often fails the first time, due to packet bats
-# We run it twice (it's idempotent) so that you don't have to
 bundle exec bosh -n deploy
+# We run it twice (it's idempotent) so that you don't have to
