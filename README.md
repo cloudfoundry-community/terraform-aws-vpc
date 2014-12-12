@@ -1,19 +1,15 @@
-# terraform-cf-aws-vpc
+# terraform-aws-vpc
 
-This project aims to create one click deploy for Cloud Foundry on AWS VPC.
+This project aims to create the infrastructure necessary for Cloud Foundry to be
+installed. For reasons of modularity, it does not install CF or microbosh itself.
 
 ## Architecture
-![](https://photos-4.dropbox.com/t/1/AAB8vXYiZDHSbE9aQqN4X9Y01lqA5CzsyPNm2-34UbXVyg/12/44300853/jpeg/1024x768/3/1413572400/0/2/cf_vpc.jpg/AYKsL9W9noKPtwL0zdQ8PxfERv3yXKefEN4yRCNM2hU)
+
+This terraform repo will create a VPC in Amazon, two subnets - one as a 'bastion'
+to put any ssh and nat servers you need, and one for 'microbosh', and the nat
+server itself.
 
 ## Deploy Cloud Foundry
 
-The one step that isn't automated is the creation of SSH keys. Waiting for feature to be added to terraform.
-An AWS SSH Key need to be created in desired region prior to running the following commands.
-
-**NOTE**: You **must** being using at least terraform 0.3.1 for the tags to work.
-
-```bash
-mkdir terraform-cf
-cd terraform-cf
-terraform apply github.com/cloudfoundry-community/terraform-cf-aws-vpc
-```
+This repo doesn't actually deploy Cloud Foundry. See 
+https://github.com/cloudfoundry-community/terraform-aws-cf for that.
