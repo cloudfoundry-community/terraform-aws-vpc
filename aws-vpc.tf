@@ -134,7 +134,7 @@ resource "aws_subnet" "microbosh" {
 	availability_zone = "${aws_subnet.bastion.availability_zone}"
 }
 
-output "aws_subnet_microbosh" {
+output "aws_subnet_microbosh_id" {
   value = "${aws_subnet.microbosh.id}"
 }
 
