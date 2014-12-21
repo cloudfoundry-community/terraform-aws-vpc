@@ -8,7 +8,7 @@ resource "aws_vpc" "default" {
 	cidr_block = "${var.network}.0.0/16"
 	enable_dns_hostnames = "true"
 	tags {
-		Name = "cf-vpc"
+		Name = "${var.aws_vpc_name}"
 	}
 }
 
@@ -97,7 +97,7 @@ resource "aws_subnet" "bastion" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.0.0/24"
 	tags {
-		Name = "bastion"
+		Name = "${var.aws_vpc_name}-bastion"
 	}
 }
 
@@ -136,7 +136,7 @@ resource "aws_subnet" "microbosh" {
 	cidr_block = "${var.network}.1.0/24"
 	availability_zone = "${aws_subnet.bastion.availability_zone}"
 	tags {
-		Name = "microbosh"
+		Name = "${var.aws_vpc_name}-microbosh"
 	}
 }
 

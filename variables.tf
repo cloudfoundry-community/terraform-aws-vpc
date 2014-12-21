@@ -11,6 +11,9 @@ variable "env_count" {
 variable "network" {
   default = "10.10"
 }
+variable "aws_vpc_name" {
+  default = "cf-vpc"
+}
 
 variable "aws_ubuntu_ami" {
     default = {
