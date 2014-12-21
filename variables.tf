@@ -8,9 +8,6 @@ variable "aws_region" {
 variable "env_count" {
   default = 1
 }
-variable "aws_nat_ami" {
-  default = "ami-1d2b2958"
-}
 variable "network" {
   default = "10.10"
 }
