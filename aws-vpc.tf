@@ -68,7 +68,7 @@ resource "aws_security_group" "nat" {
 	}
 
 	tags {
-		Name = "nat"
+		Name = "${var.aws_vpc_name}-nat"
 	}
 
 }
@@ -177,7 +177,7 @@ resource "aws_security_group" "bastion" {
 	}
 
 	tags {
-		Name = "bastion"
+		Name = "${var.aws_vpc_name}-bastion"
 	}
 
 }
