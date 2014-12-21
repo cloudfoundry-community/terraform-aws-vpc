@@ -96,6 +96,9 @@ resource "aws_eip" "nat" {
 resource "aws_subnet" "bastion" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.0.0/24"
+	tags {
+		Name = "bastion"
+	}
 }
 
 output "bastion_subnet" {
@@ -132,6 +135,9 @@ resource "aws_subnet" "microbosh" {
 	vpc_id = "${aws_vpc.default.id}"
 	cidr_block = "${var.network}.1.0/24"
 	availability_zone = "${aws_subnet.bastion.availability_zone}"
+	tags {
+		Name = "microbosh"
+	}
 }
 
 output "aws_subnet_microbosh_id" {
