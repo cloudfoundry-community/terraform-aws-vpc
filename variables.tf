@@ -5,12 +5,11 @@ variable "aws_key_name" {}
 variable "aws_region" {
   default = "us-west-2"
 }
+
 variable "env_count" {
   default = 1
 }
-variable "aws_nat_ami" {
-  default = "ami-1d2b2958"
-}
+
 variable "network" {
   default = "10.10"
 }
