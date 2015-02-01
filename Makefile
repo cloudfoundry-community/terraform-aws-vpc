@@ -1,4 +1,5 @@
 .PHONY: all plan apply destroy
+SHELL := $(SHELL) -e
 
 all: plan apply
 
@@ -16,3 +17,7 @@ destroy:
 clean:
 	rm -f terraform.tfplan
 	rm -f terraform.tfstate
+
+
+test:
+	./scripts/testPlan
