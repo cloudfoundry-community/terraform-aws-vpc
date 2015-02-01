@@ -1,0 +1,167 @@
+Refreshing Terraform state prior to plan...
+
+
+The Terraform execution plan has been generated and is shown below.
+Resources are shown in alphabetical order for quick scanning. Green resources
+will be created (or destroyed and then created if an existing resource
+exists), yellow resources are being changed in-place, and red resources
+will be destroyed.
+
+Note: You didn't specify an "-out" parameter to save this plan, so when
+"apply" is called, Terraform can't guarantee this is what will execute.
+
+[32m+ aws_eip.nat
+[0m    allocation_id:  "" => "<computed>"
+    association_id: "" => "<computed>"
+    domain:         "" => "<computed>"
+    instance:       "" => "${aws_instance.nat.id}"
+    private_ip:     "" => "<computed>"
+    public_ip:      "" => "<computed>"
+    vpc:            "" => "1"
+[0m
+[0m[32m+ aws_instance.nat
+[0m    ami:                         "" => "ami-4c9e4b24"
+    associate_public_ip_address: "" => "1"
+    availability_zone:           "" => "<computed>"
+    instance_type:               "" => "t2.small"
+    key_name:                    "" => "bosh"
+    private_dns:                 "" => "<computed>"
+    private_ip:                  "" => "<computed>"
+    public_dns:                  "" => "<computed>"
+    public_ip:                   "" => "<computed>"
+    security_groups.#:           "" => "<computed>"
+    source_dest_check:           "" => "0"
+    subnet_id:                   "" => "${aws_subnet.bastion.id}"
+    tags.#:                      "" => "1"
+    tags.Name:                   "" => "nat"
+    tenancy:                     "" => "<computed>"
+[0m
+[0m[32m+ aws_internet_gateway.default
+[0m    vpc_id: "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_route_table.private
+[0m    route.#:                       "" => "1"
+    route.~2905481903.cidr_block:  "" => "0.0.0.0/0"
+    route.~2905481903.gateway_id:  "" => ""
+    route.~2905481903.instance_id: "" => "${aws_instance.nat.id}"
+    tags.#:                        "" => "<computed>"
+    vpc_id:                        "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_route_table.public
+[0m    route.#:                       "" => "1"
+    route.~1235774185.cidr_block:  "" => "0.0.0.0/0"
+    route.~1235774185.gateway_id:  "" => "${aws_internet_gateway.default.id}"
+    route.~1235774185.instance_id: "" => ""
+    tags.#:                        "" => "<computed>"
+    vpc_id:                        "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_route_table_association.bastion-public
+[0m    route_table_id: "" => "${aws_route_table.public.id}"
+    subnet_id:      "" => "${aws_subnet.bastion.id}"
+[0m
+[0m[32m+ aws_route_table_association.microbosh-private
+[0m    route_table_id: "" => "${aws_route_table.private.id}"
+    subnet_id:      "" => "${aws_subnet.microbosh.id}"
+[0m
+[0m[32m+ aws_security_group.bastion
+[0m    description:                          "" => "Allow SSH traffic from the internet"
+    ingress.#:                            "" => "4"
+    ingress.1663094005.cidr_blocks.#:     "" => "0"
+    ingress.1663094005.from_port:         "" => "0"
+    ingress.1663094005.protocol:          "" => "udp"
+    ingress.1663094005.security_groups.#: "" => "0"
+    ingress.1663094005.self:              "" => "1"
+    ingress.1663094005.to_port:           "" => "65535"
+    ingress.219953956.cidr_blocks.#:      "" => "1"
+    ingress.219953956.cidr_blocks.0:      "" => "0.0.0.0/0"
+    ingress.219953956.from_port:          "" => "22"
+    ingress.219953956.protocol:           "" => "tcp"
+    ingress.219953956.security_groups.#:  "" => "0"
+    ingress.219953956.self:               "" => "0"
+    ingress.219953956.to_port:            "" => "22"
+    ingress.32090245.cidr_blocks.#:       "" => "1"
+    ingress.32090245.cidr_blocks.0:       "" => "0.0.0.0/0"
+    ingress.32090245.from_port:           "" => "-1"
+    ingress.32090245.protocol:            "" => "icmp"
+    ingress.32090245.security_groups.#:   "" => "0"
+    ingress.32090245.self:                "" => "0"
+    ingress.32090245.to_port:             "" => "-1"
+    ingress.3738418453.cidr_blocks.#:     "" => "0"
+    ingress.3738418453.from_port:         "" => "0"
+    ingress.3738418453.protocol:          "" => "tcp"
+    ingress.3738418453.security_groups.#: "" => "0"
+    ingress.3738418453.self:              "" => "1"
+    ingress.3738418453.to_port:           "" => "65535"
+    name:                                 "" => "bastion"
+    owner_id:                             "" => "<computed>"
+    tags.#:                               "" => "1"
+    tags.Name:                            "" => "cf-vpc-bastion"
+    vpc_id:                               "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_security_group.nat
+[0m    description:                          "" => "Allow services from the private subnet through NAT"
+    ingress.#:                            "" => "5"
+    ingress.219953956.cidr_blocks.#:      "" => "1"
+    ingress.219953956.cidr_blocks.0:      "" => "0.0.0.0/0"
+    ingress.219953956.from_port:          "" => "22"
+    ingress.219953956.protocol:           "" => "tcp"
+    ingress.219953956.security_groups.#:  "" => "0"
+    ingress.219953956.self:               "" => "0"
+    ingress.219953956.to_port:            "" => "22"
+    ingress.2603706321.cidr_blocks.#:     "" => "1"
+    ingress.2603706321.cidr_blocks.0:     "" => "0.0.0.0/0"
+    ingress.2603706321.from_port:         "" => "80"
+    ingress.2603706321.protocol:          "" => "tcp"
+    ingress.2603706321.security_groups.#: "" => "0"
+    ingress.2603706321.self:              "" => "0"
+    ingress.2603706321.to_port:           "" => "80"
+    ingress.32090245.cidr_blocks.#:       "" => "1"
+    ingress.32090245.cidr_blocks.0:       "" => "0.0.0.0/0"
+    ingress.32090245.from_port:           "" => "-1"
+    ingress.32090245.protocol:            "" => "icmp"
+    ingress.32090245.security_groups.#:   "" => "0"
+    ingress.32090245.self:                "" => "0"
+    ingress.32090245.to_port:             "" => "-1"
+    ingress.4089093546.cidr_blocks.#:     "" => "1"
+    ingress.4089093546.cidr_blocks.0:     "" => "0.0.0.0/0"
+    ingress.4089093546.from_port:         "" => "443"
+    ingress.4089093546.protocol:          "" => "tcp"
+    ingress.4089093546.security_groups.#: "" => "0"
+    ingress.4089093546.self:              "" => "0"
+    ingress.4089093546.to_port:           "" => "443"
+    ingress.4176477797.cidr_blocks.#:     "" => "1"
+    ingress.4176477797.cidr_blocks.0:     "" => "0.0.0.0/0"
+    ingress.4176477797.from_port:         "" => "9418"
+    ingress.4176477797.protocol:          "" => "tcp"
+    ingress.4176477797.security_groups.#: "" => "0"
+    ingress.4176477797.self:              "" => "0"
+    ingress.4176477797.to_port:           "" => "9418"
+    name:                                 "" => "nat"
+    owner_id:                             "" => "<computed>"
+    tags.#:                               "" => "1"
+    tags.Name:                            "" => "cf-vpc-nat"
+    vpc_id:                               "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_subnet.bastion
+[0m    availability_zone: "" => "<computed>"
+    cidr_block:        "" => "10.10.0.0/24"
+    tags.#:            "" => "1"
+    tags.Name:         "" => "cf-vpc-bastion"
+    vpc_id:            "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_subnet.microbosh
+[0m    availability_zone: "" => "${aws_subnet.bastion.availability_zone}"
+    cidr_block:        "" => "10.10.1.0/24"
+    tags.#:            "" => "1"
+    tags.Name:         "" => "cf-vpc-microbosh"
+    vpc_id:            "" => "${aws_vpc.default.id}"
+[0m
+[0m[32m+ aws_vpc.default
+[0m    cidr_block:           "" => "10.10.0.0/16"
+    enable_dns_hostnames: "" => "1"
+    enable_dns_support:   "" => "<computed>"
+    main_route_table_id:  "" => "<computed>"
+    tags.#:               "" => "1"
+    tags.Name:            "" => "cf-vpc"
+[0m
+[0m

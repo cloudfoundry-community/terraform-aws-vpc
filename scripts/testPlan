@@ -27,7 +27,7 @@ CLEANUP "$?" "$desc" "$OUTPUT"
 
 desc="Did the baseline terraform plan change?"
 terraform plan -var-file terraform.tfvars.example &> $TFILE
-OUTPUT=$(diff test-fixtures/terraform.tfplan $TFILE)
+OUTPUT=$(diff test-fixtures/terraform.testplan $TFILE)
 CLEANUP "$?" "$desc" "$OUTPUT"
 
 # If we got here, all the tests passed
