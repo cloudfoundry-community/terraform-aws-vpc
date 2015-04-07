@@ -46,9 +46,23 @@ resource "aws_security_group" "nat" {
 		cidr_blocks = ["0.0.0.0/0"]
 	}
 
+		ingress {
+		from_port = 123
+		to_port = 123
+		protocol = "udp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
 	ingress {
 		from_port = 443
 		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 4443
+		to_port = 4443
 		protocol = "tcp"
 		cidr_blocks = ["0.0.0.0/0"]
 	}
