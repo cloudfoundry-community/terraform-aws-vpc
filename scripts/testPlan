@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 exitcode=0
-TFILE=`mktemp`
+TFILE=`mktemp -t terraform-aws-vpc.XXX`
 GREEN="\e[1;34m"
 RED="\e[0;31m"
 RESET="\e[0m"
@@ -16,6 +16,9 @@ CLEANUP () {
     exit $1
   fi
 }
+
+# Pre-testing cleanup
+rm -fR .terraform/modules/
 
 desc="Can we find the terraform binary?"
 OUTPUT=$(which terraform)
