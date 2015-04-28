@@ -220,3 +220,7 @@ resource "aws_security_group" "bastion" {
 output "aws_security_group_bastion_id" {
   value = "${aws_security_group.bastion.id}"
 }
+
+output "aws_security_group_nat_id" {
+  value = "${aws_security_group.nat.id}"
+}
