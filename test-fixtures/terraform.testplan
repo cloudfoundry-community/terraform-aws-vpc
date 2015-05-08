@@ -11,13 +11,14 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 "apply" is called, Terraform can't guarantee this is what will execute.
 
 [32m+ aws_eip.nat
-[0m    allocation_id:  "" => "<computed>"
-    association_id: "" => "<computed>"
-    domain:         "" => "<computed>"
-    instance:       "" => "${aws_instance.nat.id}"
-    private_ip:     "" => "<computed>"
-    public_ip:      "" => "<computed>"
-    vpc:            "" => "1"
+[0m    allocation_id:     "" => "<computed>"
+    association_id:    "" => "<computed>"
+    domain:            "" => "<computed>"
+    instance:          "" => "${aws_instance.nat.id}"
+    network_interface: "" => "<computed>"
+    private_ip:        "" => "<computed>"
+    public_ip:         "" => "<computed>"
+    vpc:               "" => "1"
 [0m
 [0m[32m+ aws_instance.nat
 [0m    ami:                         "" => "ami-8b6912bb"
@@ -27,6 +28,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
     ephemeral_block_device.#:    "" => "<computed>"
     instance_type:               "" => "t2.small"
     key_name:                    "" => "bosh"
+    placement_group:             "" => "<computed>"
     private_dns:                 "" => "<computed>"
     private_ip:                  "" => "<computed>"
     public_dns:                  "" => "<computed>"
@@ -38,6 +40,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
     tags.#:                      "" => "1"
     tags.Name:                   "" => "nat"
     tenancy:                     "" => "<computed>"
+    vpc_security_group_ids.#:    "" => "<computed>"
 [0m
 [0m[32m+ aws_internet_gateway.default
 [0m    vpc_id: "" => "${aws_vpc.default.id}"
@@ -47,16 +50,18 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
     route.~3508085667.cidr_block:                "" => "0.0.0.0/0"
     route.~3508085667.gateway_id:                "" => ""
     route.~3508085667.instance_id:               "" => "${aws_instance.nat.id}"
+    route.~3508085667.network_interface_id:      "" => ""
     route.~3508085667.vpc_peering_connection_id: "" => ""
     vpc_id:                                      "" => "${aws_vpc.default.id}"
 [0m
 [0m[32m+ aws_route_table.public
-[0m    route.#:                                     "" => "1"
-    route.~1312964942.cidr_block:                "" => "0.0.0.0/0"
-    route.~1312964942.gateway_id:                "" => "${aws_internet_gateway.default.id}"
-    route.~1312964942.instance_id:               "" => ""
-    route.~1312964942.vpc_peering_connection_id: "" => ""
-    vpc_id:                                      "" => "${aws_vpc.default.id}"
+[0m    route.#:                                    "" => "1"
+    route.~116890926.cidr_block:                "" => "0.0.0.0/0"
+    route.~116890926.gateway_id:                "" => "${aws_internet_gateway.default.id}"
+    route.~116890926.instance_id:               "" => ""
+    route.~116890926.network_interface_id:      "" => ""
+    route.~116890926.vpc_peering_connection_id: "" => ""
+    vpc_id:                                     "" => "${aws_vpc.default.id}"
 [0m
 [0m[32m+ aws_route_table_association.bastion-public
 [0m    route_table_id: "" => "${aws_route_table.public.id}"
@@ -164,7 +169,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 [0m[32m+ aws_subnet.bastion
 [0m    availability_zone:       "" => "<computed>"
     cidr_block:              "" => "10.10.0.0/24"
-    map_public_ip_on_launch: "" => "<computed>"
+    map_public_ip_on_launch: "" => "0"
     tags.#:                  "" => "1"
     tags.Name:               "" => "cf-vpc-bastion"
     vpc_id:                  "" => "${aws_vpc.default.id}"
@@ -172,7 +177,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 [0m[32m+ aws_subnet.microbosh
 [0m    availability_zone:       "" => "${aws_subnet.bastion.availability_zone}"
     cidr_block:              "" => "10.10.1.0/24"
-    map_public_ip_on_launch: "" => "<computed>"
+    map_public_ip_on_launch: "" => "0"
     tags.#:                  "" => "1"
     tags.Name:               "" => "cf-vpc-microbosh"
     vpc_id:                  "" => "${aws_vpc.default.id}"
@@ -181,6 +186,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 [0m    cidr_block:                "" => "10.10.0.0/16"
     default_network_acl_id:    "" => "<computed>"
     default_security_group_id: "" => "<computed>"
+    dhcp_options_id:           "" => "<computed>"
     enable_dns_hostnames:      "" => "1"
     enable_dns_support:        "" => "<computed>"
     main_route_table_id:       "" => "<computed>"
