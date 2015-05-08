@@ -73,7 +73,14 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 [0m
 [0m[32m+ aws_security_group.bastion
 [0m    description:                          "" => "Allow SSH traffic from the internet"
-    egress.#:                             "" => "<computed>"
+    egress.#:                             "" => "1"
+    egress.532441254.cidr_blocks.#:       "" => "1"
+    egress.532441254.cidr_blocks.0:       "" => "0.0.0.0/0"
+    egress.532441254.from_port:           "" => "0"
+    egress.532441254.protocol:            "" => "-1"
+    egress.532441254.security_groups.#:   "" => "0"
+    egress.532441254.self:                "" => "0"
+    egress.532441254.to_port:             "" => "65535"
     ingress.#:                            "" => "4"
     ingress.1799340084.cidr_blocks.#:     "" => "1"
     ingress.1799340084.cidr_blocks.0:     "" => "0.0.0.0/0"
@@ -109,7 +116,14 @@ Note: You didn't specify an "-out" parameter to save this plan, so when
 [0m
 [0m[32m+ aws_security_group.nat
 [0m    description:                          "" => "Allow services from the private subnet through NAT"
-    egress.#:                             "" => "<computed>"
+    egress.#:                             "" => "1"
+    egress.532441254.cidr_blocks.#:       "" => "1"
+    egress.532441254.cidr_blocks.0:       "" => "0.0.0.0/0"
+    egress.532441254.from_port:           "" => "0"
+    egress.532441254.protocol:            "" => "-1"
+    egress.532441254.security_groups.#:   "" => "0"
+    egress.532441254.self:                "" => "0"
+    egress.532441254.to_port:             "" => "65535"
     ingress.#:                            "" => "7"
     ingress.1431762526.cidr_blocks.#:     "" => "1"
     ingress.1431762526.cidr_blocks.0:     "" => "0.0.0.0/0"
