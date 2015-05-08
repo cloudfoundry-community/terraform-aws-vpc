@@ -81,6 +81,13 @@ resource "aws_security_group" "nat" {
 		protocol = "icmp"
 	}
 
+	egress {
+		from_port = 0
+		to_port = 65535
+		protocol = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
 	tags {
 		Name = "${var.aws_vpc_name}-nat"
 	}
@@ -209,6 +216,13 @@ resource "aws_security_group" "bastion" {
 		from_port = -1
 		to_port = -1
 		protocol = "icmp"
+	}
+
+	egress {
+		from_port = 0
+		to_port = 65535
+		protocol = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
 	}
 
 	tags {
